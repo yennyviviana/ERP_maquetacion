@@ -117,44 +117,167 @@ while ($financiera = $resultados->fetch_assoc()) {
     </form>
 
      
-    
-    <table class="table table-bordered table-hover">
-    <thead class="bg-primary text-white">
-                <tr>
-                    <th>Id</th>
-                    <th>Fecha</th>
-                    <th>Monto</th>
-                    <th>Tipo</th>
-                    <th>Descripción</th>
-                    <th>Usuario</th>
-                    <th>Proveedor</th>
-                    <th>Cliente</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php $resultados->data_seek(0); // Reiniciar puntero ?>
-                <?php while ($financiera = $resultados->fetch_assoc()): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($financiera['id_transaccion']) ?></td>
-                        <td><?= htmlspecialchars($financiera['fecha_transaccion']) ?></td>
-                        <td>$ <?= number_format($financiera['monto'], 2, ',', '.') ?></td>
-                        <td><?= htmlspecialchars($financiera['tipo_transaccion']) ?></td>
-                        <td><?= htmlspecialchars($financiera['descripcion']) ?></td>
-                        <td><?= htmlspecialchars($financiera['id_usuario']) ?></td>
-                        <td><?= htmlspecialchars($financiera['id_proveedor']) ?></td>
-                        <td><?= htmlspecialchars($financiera['id_cliente']) ?></td>
-                        <td>
-                            <a href="edit.php?lla=<?= $financiera['id_transaccion'] ?>" class="btn btn-primary btn-editar">Editar</a>
-                            <button class="btn btn-danger btn-borrar" onclick="borrarFinanciera(<?= $financiera['id_transaccion'] ?>)">Borrar</button>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
-    </div>
+    <div class="table-responsive">
+
+    <table class="table table-hover table-bordered">
+
+        <thead class="table-primary">
+            <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Monto</th>
+                <th>Tipo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        <?php $resultados->data_seek(0); ?>
+
+        <?php while ($financiera = $resultados->fetch_assoc()): ?>
+
+            <tr>
+
+                <td><?= htmlspecialchars($financiera['id_transaccion']) ?></td>
+
+                <td><?= htmlspecialchars($financiera['fecha_transaccion']) ?></td>
+
+                <td>
+                    $ <?= number_format($financiera['monto'], 2, ',', '.') ?>
+                </td>
+
+                <td>
+
+                    <?php
+                    $tipo = strtolower($financiera['tipo_transaccion']);
+
+                    if ($tipo == 'ingreso') {
+                        echo '<span class="badge bg-success">Ingreso</span>';
+                    } elseif ($tipo == 'egreso') {
+                        echo '<span class="badge bg-danger">Egreso</span>';
+                    } else {
+                        echo '<span class="badge bg-secondary">'
+                            . htmlspecialchars($financiera['tipo_transaccion']) .
+                            '</span>';
+                    }
+                    ?>
+
+                </td>
+
+                <td>
+
+                    <!-- Ver -->
+                    <button
+                        class="btn btn-info btn-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#financiera<?= $financiera['id_transaccion'] ?>">
+
+                        <i class="fas fa-eye"></i>
+                    </button>
+
+                    <!-- Editar -->
+                    <a href="edit.php?lla=<?= $financiera['id_transaccion'] ?>"
+                       class="btn btn-primary btn-sm">
+
+                        <i class="fas fa-edit"></i>
+                    </a>
+
+                    <!-- Eliminar -->
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="borrarFinanciera(<?= $financiera['id_transaccion'] ?>)">
+
+                        <i class="fas fa-trash"></i>
+                    </button>
+
+                </td>
+
+            </tr>
+
+            <!-- Modal -->
+            <div class="modal fade"
+                 id="financiera<?= $financiera['id_transaccion'] ?>"
+                 tabindex="-1"
+                 aria-hidden="true">
+
+                <div class="modal-dialog modal-lg">
+
+                    <div class="modal-content">
+
+                        <div class="modal-header bg-primary text-white">
+
+                            <h5 class="modal-title">
+                                Transacción #<?= htmlspecialchars($financiera['id_transaccion']) ?>
+                            </h5>
+
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                            </button>
+
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Fecha:</strong><br>
+                                    <?= htmlspecialchars($financiera['fecha_transaccion']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Monto:</strong><br>
+                                    $ <?= number_format($financiera['monto'], 2, ',', '.') ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Tipo:</strong><br>
+                                    <?= htmlspecialchars($financiera['tipo_transaccion']) ?>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <strong>Descripción:</strong><br>
+                                    <?= htmlspecialchars($financiera['descripcion']) ?>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <strong>Usuario:</strong><br>
+                                    <?= htmlspecialchars($financiera['id_usuario']) ?>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <strong>Proveedor:</strong><br>
+                                    <?= htmlspecialchars($financiera['id_proveedor']) ?>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <strong>Cliente:</strong><br>
+                                    <?= htmlspecialchars($financiera['id_cliente']) ?>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        <?php endwhile; ?>
+
+        </tbody>
+
+    </table>
+
 </div>
 
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
  <!-- Paginación -->
  <nav>

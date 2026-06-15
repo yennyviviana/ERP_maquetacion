@@ -128,68 +128,223 @@ if (!$resultados) {
     </form>
 
 
-               
-    <table class="table table-bordered table-hover">
-    <thead class="bg-primary text-white">
-             
-                    <tr>
-                        <th scope="col">Id</th>
-                        <th scope="col">Producto</th>
-                        <th scope="col">Precio</th>
-                        <th scope="col">Cantidad stock</th>
-                        <th scope="col">Categoria</th>
-                        <th scope="col">Estado</th>
-                        <th scope="col">Fecha adquisición</th>
-                        <th scope="col">Fecha de vencimiento</th>
-                        <th scope="col">Proveedor</th>
-                        <th scope="col">Detalles</th>
-                        <th scope="col">Archivo</th>
-                        <th scope="col">Código Barras</th>
-                        <th scope="col">Acciones</th>
-                    </tr>
-                </thead>
-</tr>
+
+<div class="table-responsive">
+
+    <table class="table table-hover table-bordered">
+
+        <thead class="table-primary">
+            <tr>
+                <th>ID</th>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Categoría</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
 
         <tbody>
-        <?php
-        // Iterar sobre los resultados y mostrarlos
-        while ($producto = $resultados->fetch_assoc()) {
-        ?>
+
+        <?php while ($producto = $resultados->fetch_assoc()): ?>
+
             <tr>
-                <td><?php echo htmlspecialchars($producto['id_producto']); ?></td>
-                <td><?php echo htmlspecialchars($producto['nombre_producto']); ?></td>
-                <td>$ <?php echo number_format($producto['precio'], 2, ',', '.'); ?></td>
-                <td><?php echo htmlspecialchars($producto['cantidad_stock']); ?></td>
-                <td><?php echo htmlspecialchars($producto['categoria_productos']); ?></td>
-                <td><?php echo htmlspecialchars($producto['estado']); ?></td>
-                <td><?php echo htmlspecialchars($producto['fecha_adquisicion']); ?></td>
-                <td><?php echo htmlspecialchars($producto['fecha_vencimiento']); ?></td>
-                <td><?php echo htmlspecialchars($producto['id_proveedor']); ?></td>
-                <td><?php echo htmlspecialchars($producto['detalles']); ?></td>
-                <td><img src="../../public/img/Catalogo/<?php echo $producto['archivo']; ?>" width="100" alt=""></td>
-                <td><?php echo htmlspecialchars($producto['codigo_barras']); ?></td>
-                
-                
-                <td> 
-                   <!-- Botón para editar -->  
-                   <a href="edit.php?da=Products-3&lla=<?php echo $producto['id_producto']; ?>"  class="btn btn-custom-green btn-editar">
-                <i class="fas fa-edit icon"></i> Editar
 
-<!-- Botón de Borrar -->
-<a href="#" class="btn btn-danger btn-borrar" onclick="borrarProducto(<?php echo $producto['id_producto']; ?>, '<?php echo $producto['archivo'];  ?>')">
-    <i class="fas fa-trash-alt"></i> Borrar
-</a>
+                <td><?= htmlspecialchars($producto['id_producto']) ?></td>
+
+                <td><?= htmlspecialchars($producto['nombre_producto']) ?></td>
+
+                <td>
+                    $<?= number_format($producto['precio'], 2, ',', '.') ?>
+                </td>
+
+                <td>
+                    <?= htmlspecialchars($producto['cantidad_stock']) ?>
+                </td>
+
+                <td>
+                    <?= htmlspecialchars($producto['categoria_productos']) ?>
+                </td>
+
+                <td>
+
+                    <?php
+                    $estado = strtolower($producto['estado']);
+
+                    if ($estado == 'activo') {
+                        echo '<span class="badge bg-success">Activo</span>';
+                    } elseif ($estado == 'agotado') {
+                        echo '<span class="badge bg-danger">Agotado</span>';
+                    } else {
+                        echo '<span class="badge bg-warning text-dark">'
+                            . htmlspecialchars($producto['estado']) .
+                            '</span>';
+                    }
+                    ?>
+
+                </td>
+
+                <td>
+
+                    <!-- Ver -->
+                    <button
+                        class="btn btn-info btn-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#producto<?= $producto['id_producto'] ?>">
+
+                        <i class="fas fa-eye"></i>
+                    </button>
+
+                    <!-- Editar -->
+                    <a href="edit.php?da=Products-3&lla=<?= $producto['id_producto'] ?>"
+                       class="btn btn-primary btn-sm">
+
+                        <i class="fas fa-edit"></i>
+                    </a>
+
+                    <!-- Eliminar -->
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="borrarProducto(
+                            <?= $producto['id_producto'] ?>,
+                            '<?= htmlspecialchars($producto['archivo']) ?>'
+                        )">
+
+                        <i class="fas fa-trash"></i>
+                    </button>
+
+                </td>
+
             </tr>
-        <?php
-        }
 
-        // Cerrar la conexión
-        $mysqli->close();
-        ?>
+            <!-- Modal -->
+            <div class="modal fade"
+                 id="producto<?= $producto['id_producto'] ?>"
+                 tabindex="-1"
+                 aria-hidden="true">
+
+                <div class="modal-dialog modal-lg">
+
+                    <div class="modal-content">
+
+                        <div class="modal-header bg-primary text-white">
+
+                            <h5 class="modal-title">
+                                Producto #<?= htmlspecialchars($producto['id_producto']) ?>
+                            </h5>
+
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                            </button>
+
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Producto:</strong><br>
+                                    <?= htmlspecialchars($producto['nombre_producto']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Categoría:</strong><br>
+                                    <?= htmlspecialchars($producto['categoria_productos']) ?>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <strong>Precio:</strong><br>
+                                    $<?= number_format($producto['precio'], 2, ',', '.') ?>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <strong>Stock:</strong><br>
+                                    <?= htmlspecialchars($producto['cantidad_stock']) ?>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <strong>Estado:</strong><br>
+                                    <?= htmlspecialchars($producto['estado']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Fecha Adquisición:</strong><br>
+                                    <?= htmlspecialchars($producto['fecha_adquisicion']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Fecha Vencimiento:</strong><br>
+                                    <?= htmlspecialchars($producto['fecha_vencimiento']) ?>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <strong>Proveedor:</strong><br>
+                                    <?= htmlspecialchars($producto['id_proveedor']) ?>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <strong>Detalles:</strong><br>
+                                    <?= htmlspecialchars($producto['detalles']) ?>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <strong>Código de Barras:</strong><br>
+                                    <?= htmlspecialchars($producto['codigo_barras']) ?>
+                                </div>
+
+                                <div class="col-md-12">
+
+                                    <strong>Imagen:</strong><br>
+
+                                    <?php if (!empty($producto['archivo'])): ?>
+
+                                        <img
+                                            src="../../public/img/Catalogo/<?= htmlspecialchars($producto['archivo']) ?>"
+                                            class="img-fluid border rounded"
+                                            style="max-height:250px;">
+
+                                    <?php else: ?>
+
+                                        <span class="text-muted">
+                                            Sin imagen disponible
+                                        </span>
+
+                                    <?php endif; ?>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        <?php endwhile; ?>
+
         </tbody>
+
     </table>
 
-   
+</div>
+
+
+<?php $mysqli->close(); ?>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
  <!-- Paginación -->
  <nav>
         <ul class="pagination">

@@ -271,71 +271,190 @@ h2 {
     </form>
 
     
-    
-   
-    <table class="table table-bordered table-hover">
-    <thead class="bg-primary text-white">
-             
-                        
-            <tr>
-            <th scope="col">Id</th>
-            <th scope="col">Nombre</th>
-            <th scope="col">Apellido</th>
-           <th scope="col">Email</th>
-           <th scope="col">Tipo Documento</th>
-          <th scope="col">Documento Identidad</th>
-         <th scope="col">Telefono</th>
-         <th scope="col">Direccion</th>
-         <th scope="col">Ciudad</th>
-        <th scope="col">Estado</th>
-        <th scope="col">Codigo Postal</th>
-        <th scope="col">Pais</th>
-        <th scope="col">Notas</th>
-        <th scope="col">Fecha Creacion</th>
-        <th scope="col">Fecha Modificacion</th>
-        <th scope="col">Acciones</th>
+    <div class="table-responsive">
 
+<table class="table table-hover table-bordered">
+
+    <thead class="table-primary">
+        <tr>
+            <th>ID</th>
+            <th>Nombre Completo</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Ciudad</th>
+            <th>Acciones</th>
+        </tr>
     </thead>
-    <tbody>     
+
+    <tbody>
+
     <?php while ($cliente = $resultados->fetch_assoc()): ?>
 
-    
-    <tr>
-    <td><?php echo htmlspecialchars($cliente['id_cliente']); ?></td>
-        <td><?php echo htmlspecialchars($cliente['nombre']); ?></td>
-        <td><?php echo htmlspecialchars($cliente['apellido']); ?></td>
-        <td><?php echo htmlspecialchars($cliente['email']); ?></td>
- <td><img src="../../public/files/uploads/clientes/<?php echo $pedido['documento_identidad']; ?>" width="100"></td>
-        
-    <td><?php echo htmlspecialchars($cliente['tipo_documento']); ?></td>
-        <td><?php echo htmlspecialchars($cliente['telefono']); ?></td>
-        <td><?php echo htmlspecialchars($cliente['direccion']); ?></td>
-        <td><?php echo htmlspecialchars($cliente['ciudad']); ?></td>
-        <td><?php echo htmlspecialchars($cliente['estado']); ?></td>
-        <td><?php echo htmlspecialchars($cliente['codigo_postal']); ?></td>
-        <td><?php echo htmlspecialchars($cliente['pais']); ?></td>
-        <td><?php echo htmlspecialchars($cliente['notas']); ?></td>
-        <td><?php echo htmlspecialchars($cliente['fecha_creacion']); ?></td>
-        <td><?php echo htmlspecialchars($cliente['fecha_modificacion']); ?></td>
-       
-        <td>
-              
-                <a href="edit.php?da=Customers-3&lla=<?php echo $cliente['id_cliente']; ?>"  class="btn btn-custom-green btn-editar">
-                <i class="fas fa-edit icon"></i> Editar
+        <tr>
 
+            <td><?= $cliente['id_cliente'] ?></td>
 
-    <a href="#" class="btn btn-danger btn-borrar" onclick="borrarCliente(<?php echo $cliente['id_cliente']; ?>)">
-    <i class="fas fa-trash-alt"></i> Borrar
-</a>
-</td>
-                    </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
-    </div>
-</div>        
-             
+            <td>
+                <?= htmlspecialchars($cliente['nombre']) ?>
+                <?= htmlspecialchars($cliente['apellido']) ?>
+            </td>
 
+            <td>
+                <?= htmlspecialchars($cliente['email']) ?>
+            </td>
+
+            <td>
+                <?= htmlspecialchars($cliente['telefono']) ?>
+            </td>
+
+            <td>
+                <?= htmlspecialchars($cliente['ciudad']) ?>
+            </td>
+
+            <td>
+
+                <!-- Ver -->
+                <button
+                    class="btn btn-info btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#cliente<?= $cliente['id_cliente'] ?>">
+
+                    <i class="fas fa-eye"></i>
+                </button>
+
+                <!-- Editar -->
+                <a href="edit.php?da=Customers-3&lla=<?= $cliente['id_cliente'] ?>"
+                   class="btn btn-primary btn-sm">
+
+                    <i class="fas fa-edit"></i>
+                </a>
+
+                <!-- Eliminar -->
+                <button
+                    class="btn btn-danger btn-sm"
+                    onclick="borrarCliente(<?= $cliente['id_cliente'] ?>)">
+
+                    <i class="fas fa-trash"></i>
+                </button>
+
+            </td>
+
+        </tr>
+
+        <!-- Modal Detalles -->
+        <div class="modal fade"
+             id="cliente<?= $cliente['id_cliente'] ?>"
+             tabindex="-1">
+
+            <div class="modal-dialog modal-lg">
+
+                <div class="modal-content">
+
+                    <div class="modal-header bg-primary text-white">
+
+                        <h5 class="modal-title">
+                            Cliente #<?= $cliente['id_cliente'] ?>
+                        </h5>
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                        </button>
+
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <strong>Nombre:</strong><br>
+                                <?= htmlspecialchars($cliente['nombre']) ?>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <strong>Apellido:</strong><br>
+                                <?= htmlspecialchars($cliente['apellido']) ?>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <strong>Email:</strong><br>
+                                <?= htmlspecialchars($cliente['email']) ?>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <strong>Teléfono:</strong><br>
+                                <?= htmlspecialchars($cliente['telefono']) ?>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <strong>Tipo Documento:</strong><br>
+                                <?= htmlspecialchars($cliente['tipo_documento']) ?>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <strong>Documento:</strong><br>
+                                <?= htmlspecialchars($cliente['documento_identidad']) ?>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <strong>Dirección:</strong><br>
+                                <?= htmlspecialchars($cliente['direccion']) ?>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <strong>Ciudad:</strong><br>
+                                <?= htmlspecialchars($cliente['ciudad']) ?>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <strong>Estado:</strong><br>
+                                <?= htmlspecialchars($cliente['estado']) ?>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <strong>Código Postal:</strong><br>
+                                <?= htmlspecialchars($cliente['codigo_postal']) ?>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <strong>País:</strong><br>
+                                <?= htmlspecialchars($cliente['pais']) ?>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <strong>Fecha Creación:</strong><br>
+                                <?= htmlspecialchars($cliente['fecha_creacion']) ?>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <strong>Notas:</strong><br>
+                                <?= htmlspecialchars($cliente['notas']) ?>
+                            </div>
+
+                            <div class="col-md-12">
+                                <strong>Última Modificación:</strong><br>
+                                <?= htmlspecialchars($cliente['fecha_modificacion']) ?>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    <?php endwhile; ?>
+
+    </tbody>
+
+</table>
+
+</div>
  <!-- Paginación -->
  <nav>
         <ul class="pagination">
@@ -375,6 +494,8 @@ h2 {
 
 </div>
 
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 function borrarCliente(id, imagen) {

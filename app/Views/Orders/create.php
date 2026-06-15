@@ -108,71 +108,179 @@ if (!$resultados) {
     </form>
 
 
-   
- <table class="table table-bordered table-hover">
-    <thead class="bg-primary text-white">
-  <tr>
-    <th>ID Pedido</th>
-    <th>ID Usuario</th>
-    <th>Total</th>
-    <th>Estado</th>
-    <th>Dirección</th>
-    <th>Descripción</th>
-    <th>Seguimiento</th>
-    <th>Tiempo</th>
-    <th>Información</th>
-    <th>Subtotal</th>
-    <th>Impuestos</th>
-    <th>Fecha Pedido</th>
-    <th>Fecha Entrega</th>
-    <th>Acciones</th>
-  </tr>
-</thead>
 
-    <tbody>
-      <?php while ($pedido = $resultados->fetch_assoc()): ?>
-        <tr>
-          <td><?= htmlspecialchars($pedido['id_pedido']) ?></td>
+    <table class="table table-bordered table-hover">
+        <thead class="table-primary">
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Estado</th>
+                <th>Total</th>
+                <th>Fecha Pedido</th>
+                <th>Fecha Entrega</th>
+                <th width="220">Acciones</th>
+            </tr>
+        </thead>
 
-           <td><?= htmlspecialchars($pedido['id_usuario']) ?></td>
-           
-          <td><?= number_format($pedido['total'], 2) ?></td>
-          <td><?= htmlspecialchars($pedido['estado']) ?></td>
-           <td><?= htmlspecialchars($pedido['direccion']) ?></td>
-            <td><?= htmlspecialchars($pedido['descripcion']) ?></td>
-             <td><?= htmlspecialchars($pedido['numero_seguimiento']) ?></td>
-              <td><?= htmlspecialchars($pedido['tiempo_entrega_horas']) ?></td>
-                  <td><?= htmlspecialchars($pedido['informacion_pedido']) ?></td>
-                   <td><?= htmlspecialchars($pedido['subtotal']) ?></td>
-                       <td><?= htmlspecialchars($pedido['impuestos']) ?></td>
-                       <td><?= htmlspecialchars($pedido['fecha_pedido']) ?></td>
-                      <td><?= htmlspecialchars($pedido['fecha_entrega']) ?></td>
-                 
+        <tbody>
 
+        <?php while ($pedido = $resultados->fetch_assoc()): ?>
 
-<td>
+            <tr>
 
-  <a href="edit.php?da=Orders-3&lla=<?php echo $pedido['id_usuario']; ?>"
-     class="btn btn-primary btn-sm">
-    <i class="fas fa-edit"></i> Editar
-  </a>
+                <td><?= $pedido['id_pedido']; ?></td>
 
-  <a href="#"
-     class="btn btn-danger btn-sm btn-borrar"
-     onclick="borrarPedido(<?php echo $pedido['id_usuario']; ?>)">
-    <i class="fas fa-trash-alt"></i> Borrar
-  </a>
-</td>
+                <td><?= $pedido['id_usuario']; ?></td>
 
+                <td>
 
+                    <?php
+                    switch($pedido['estado']){
+                        case 'aprobado':
+                            echo '<span class="badge bg-success">Aprobado</span>';
+                            break;
 
-        </tr>
-      <?php endwhile; ?>
-    </tbody>
-  </table>
+                        case 'cancelado':
+                            echo '<span class="badge bg-danger">Cancelado</span>';
+                            break;
+
+                        case 'entregado':
+                            echo '<span class="badge bg-info">Entregado</span>';
+                            break;
+
+                        default:
+                            echo '<span class="badge bg-warning text-dark">Pendiente</span>';
+                    }
+                    ?>
+
+                </td>
+
+                <td>$<?= number_format($pedido['total'],2); ?></td>
+
+                <td><?= $pedido['fecha_pedido']; ?></td>
+
+                <td><?= $pedido['fecha_entrega']; ?></td>
+
+                <td>
+
+                    <button
+                        class="btn btn-info btn-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#pedido<?= $pedido['id_pedido']; ?>">
+                        <i class="fas fa-eye"></i>
+                    </button>
+
+                    <a href="edit.php?da=Orders-3&lla=<?= $pedido['id_pedido']; ?>"
+                       class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i>
+                    </a>
+
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="borrarPedido(<?= $pedido['id_pedido']; ?>)">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+
+                </td>
+
+            </tr>
+
+            <!-- MODAL DETALLE -->
+
+            <div class="modal fade"
+                 id="pedido<?= $pedido['id_pedido']; ?>"
+                 tabindex="-1">
+
+                <div class="modal-dialog modal-lg">
+
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+
+                            <h5 class="modal-title">
+                                Pedido #<?= $pedido['id_pedido']; ?>
+                            </h5>
+
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal">
+                            </button>
+
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Usuario:</strong><br>
+                                    <?= $pedido['id_usuario']; ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Estado:</strong><br>
+                                    <?= htmlspecialchars($pedido['estado']); ?>
+                                </div>
+
+                                <div class="col-12 mb-3">
+                                    <strong>Dirección:</strong><br>
+                                    <?= htmlspecialchars($pedido['direccion']); ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Número Seguimiento:</strong><br>
+                                    <?= htmlspecialchars($pedido['numero_seguimiento']); ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Tiempo Entrega:</strong><br>
+                                    <?= htmlspecialchars($pedido['tiempo_entrega_horas']); ?> horas
+                                </div>
+
+                                <div class="col-12 mb-3">
+                                    <strong>Descripción:</strong><br>
+                                    <?= $pedido['descripcion']; ?>
+                                </div>
+
+                                <div class="col-12 mb-3">
+                                    <strong>Información:</strong><br>
+                                    <?= htmlspecialchars($pedido['informacion_pedido']); ?>
+                                </div>
+
+                                <hr>
+
+                                <div class="col-md-4">
+                                    <strong>Subtotal</strong><br>
+                                    $<?= number_format($pedido['subtotal'] ?? 0,2); ?>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <strong>Impuestos</strong><br>
+                                    $<?= number_format($pedido['impuestos'] ?? 0,2); ?>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <strong>Total</strong><br>
+                                    $<?= number_format($pedido['total'],2); ?>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        <?php endwhile; ?>
+
+        </tbody>
+
+    </table>
+
 </div>
-
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 

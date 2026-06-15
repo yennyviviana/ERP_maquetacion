@@ -265,47 +265,173 @@ h2 {
     </form>
 
 
-    <div class="table">
-  <table class="table table-bordered table-hover">
-    <thead class="table-dark">
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Cargo</th>
-        <th>Estado</th>
-        <th>Departamento</th>
-        <th>Tipo Documento</th>
-        <th>Documento</th>
-        <th>Dirección</th>
-        <th>Teléfono</th>
-        <th>Acciones</th> 
-      </tr>
-    </thead>
-    <tbody>
-      <?php while ($empleado = $resultados->fetch_assoc()): ?>
-      <tr>
-        <td><?= htmlspecialchars($empleado['id_empleado']) ?></td>
-        <td><?= htmlspecialchars($empleado['nombre_completo']) ?></td>
-        <td><?= htmlspecialchars($empleado['cargo']) ?></td>
-        <td><?= htmlspecialchars($empleado['estado']) ?></td>
-        <td><?= htmlspecialchars($empleado['departamento']) ?></td>
-        <td><?= htmlspecialchars($empleado['tipo_documento']) ?></td>
-        <td><?= htmlspecialchars($empleado['documento_identidad']) ?></td>
-        <td><?= htmlspecialchars($empleado['direccion']) ?></td>
-        <td><?= htmlspecialchars($empleado['telefono']) ?></td>
-        <td>
-          <a href="edit.php?da=Employees-3&lla=<?= $empleado['id_empleado'] ?>" class="btn btn-sm btn-success mb-1">
-            <i class="fas fa-edit"></i> Editar
-          </a>
-          <a href="#" class="btn btn-sm btn-danger" onclick="borrarEmpleado(<?= $empleado['id_empleado'] ?>, '<?= $empleado['documento_identidad'] ?>')">
-            <i class="fas fa-trash-alt"></i> Borrar
-          </a>
-        </td>
-      </tr>
-      <?php endwhile; ?>
-    </tbody>
-  </table>
+    <div class="table-responsive">
+
+    <table class="table table-hover table-bordered">
+
+        <thead class="table-primary">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Cargo</th>
+                <th>Departamento</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        <?php while ($empleado = $resultados->fetch_assoc()): ?>
+
+            <tr>
+
+                <td><?= htmlspecialchars($empleado['id_empleado']) ?></td>
+
+                <td><?= htmlspecialchars($empleado['nombre_completo']) ?></td>
+
+                <td><?= htmlspecialchars($empleado['cargo']) ?></td>
+
+                <td><?= htmlspecialchars($empleado['departamento']) ?></td>
+
+                <td>
+
+                    <?php
+                    $estado = strtolower($empleado['estado']);
+
+                    if ($estado == 'activo') {
+                        echo '<span class="badge bg-success">Activo</span>';
+                    } elseif ($estado == 'inactivo') {
+                        echo '<span class="badge bg-danger">Inactivo</span>';
+                    } else {
+                        echo '<span class="badge bg-secondary">'
+                             . htmlspecialchars($empleado['estado']) .
+                             '</span>';
+                    }
+                    ?>
+
+                </td>
+
+                <td>
+
+                    <!-- Ver -->
+                    <button
+                        class="btn btn-info btn-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#empleado<?= $empleado['id_empleado'] ?>">
+
+                        <i class="fas fa-eye"></i>
+                    </button>
+
+                    <!-- Editar -->
+                    <a href="edit.php?da=Employees-3&lla=<?= $empleado['id_empleado'] ?>"
+                       class="btn btn-primary btn-sm">
+
+                        <i class="fas fa-edit"></i>
+                    </a>
+
+                    <!-- Eliminar -->
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="borrarEmpleado(
+                            <?= $empleado['id_empleado'] ?>,
+                            '<?= htmlspecialchars($empleado['documento_identidad']) ?>'
+                        )">
+
+                        <i class="fas fa-trash"></i>
+                    </button>
+
+                </td>
+
+            </tr>
+
+            <!-- Modal -->
+            <div class="modal fade"
+                 id="empleado<?= $empleado['id_empleado'] ?>"
+                 tabindex="-1"
+                 aria-hidden="true">
+
+                <div class="modal-dialog modal-lg">
+
+                    <div class="modal-content">
+
+                        <div class="modal-header bg-primary text-white">
+
+                            <h5 class="modal-title">
+                                Empleado #<?= htmlspecialchars($empleado['id_empleado']) ?>
+                            </h5>
+
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                            </button>
+
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Nombre Completo:</strong><br>
+                                    <?= htmlspecialchars($empleado['nombre_completo']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Cargo:</strong><br>
+                                    <?= htmlspecialchars($empleado['cargo']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Departamento:</strong><br>
+                                    <?= htmlspecialchars($empleado['departamento']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Estado:</strong><br>
+                                    <?= htmlspecialchars($empleado['estado']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Tipo Documento:</strong><br>
+                                    <?= htmlspecialchars($empleado['tipo_documento']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Documento:</strong><br>
+                                    <?= htmlspecialchars($empleado['documento_identidad']) ?>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <strong>Dirección:</strong><br>
+                                    <?= htmlspecialchars($empleado['direccion']) ?>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <strong>Teléfono:</strong><br>
+                                    <?= htmlspecialchars($empleado['telefono']) ?>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        <?php endwhile; ?>
+
+        </tbody>
+
+    </table>
+
 </div>
+
+
 
 
 <script>

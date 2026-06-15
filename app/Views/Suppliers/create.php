@@ -245,132 +245,211 @@ h2 {
 }
 </style>
 
+
+
     <div class="panel">
         <div class="column">
-            <h2>Módulo de proveedores</h2>
+            <h2>Orders Module</h2>
             <ul class="nav">
-                <li><i class="fas fa-edit icon"></i><a href='insert.php?da=Suppliers-2'>Insert Proveedor</a></li>
+                <li><i class="fas fa-edit icon"></i><a href='insert.php?da=Orders-2'>Order Insert</a></li>
                 <li class="nav-item">
                 <a class="nav-link" href="/OptimizationPRO/app/main.php">
                                 <span data-feather="Home"></span>
-                                 Regresar
+                                Go back
                             </a>
                         </li>
             </ul>
         </div>
     </div>
 
-    <br>
+    <div class="container-fluid">
 
-<div class="container-fluid">
-    <!-- Formulario de búsqueda.....-->
-    <form method="GET" class="d-flex justify-content-center mb-3">
-        <input type="text" name="search-query" class="form-control w-50 me-2" 
-               placeholder="Buscar proveedor..." value="<?php echo htmlspecialchars($searchQuery); ?>">
+    <!-- Búsqueda -->
+    <form method="GET" class="d-flex justify-content-center mb-4">
+        <input type="text"
+               name="search-query"
+               class="form-control w-50 me-2"
+               placeholder="Buscar proveedor..."
+               value="<?= htmlspecialchars($searchQuery); ?>">
+
         <button type="submit" class="btn btn-primary">
             <i class="fas fa-search"></i> Buscar
         </button>
     </form>
 
-   
-
     <div class="table-responsive">
-  <table class="table table-bordered table-hover">
-    <thead class="bg-primary text-white">
-      <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Producto</th>
-        <th scope="col">Empresa</th>
-        <th scope="col">Dirección</th>
-        <th scope="col">Teléfono</th>
-        <th scope="col">Email</th>
-        <th scope="col">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php while ($proveedor = $resultados->fetch_assoc()): ?>
-        <tr>
-          <td><?= htmlspecialchars($proveedor['id_proveedor']) ?></td>
-          <td><?= htmlspecialchars($proveedor['id_producto']) ?></td>
-          <td><?= htmlspecialchars($proveedor['nombre_empresa']) ?></td>
-          <td><?= htmlspecialchars($proveedor['direccion']) ?></td>
-          <td><?= htmlspecialchars($proveedor['telefono']) ?></td>
-          <td><?= htmlspecialchars($proveedor['correo_electronico']) ?></td>
-          <td>
-            <button class="btn btn-sm btn-info"
-              data-bs-toggle="modal"
-              data-bs-target="#detalleModal"
-              data-condiciones_pago="<?= htmlspecialchars($proveedor['condiciones_pago']) ?>"
-              data-metodo_pago="<?= htmlspecialchars($proveedor['metodo_pago']) ?>"
-              data-descripcion="<?= htmlspecialchars($proveedor['descripcion']) ?>"
-              data-historial_pedidos="<?= htmlspecialchars($proveedor['historial_pedidos']) ?>"
-              data-archivo="<?= htmlspecialchars($proveedor['archivo']) ?>"
-            >Ver detalles</button>
+        <table class="table table-hover table-bordered">
 
-            <a href="edit.php?da=Suppliers-3&lla=<?= $proveedor['id_proveedor'] ?>" title="Editar">
-              <i class="fas fa-edit icono-editar"></i>
-            </a>
+            <thead class="table-primary">
+                <tr>
+                    <th>ID</th>
+                    <th>Empresa</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
 
-            <a href="#" title="Borrar" onclick="borrarProveedor(<?= $proveedor['id_proveedor'] ?>, '<?= $proveedor['archivo'] ?>')">
-              <i class="fas fa-trash-alt icono-borrar"></i>
-            </a>
-          </td>
-        </tr>
-      <?php endwhile; ?>
-    </tbody>
-  </table>
-</div>
+            <tbody>
 
-<!-- Modal Detalles -->
-<div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title">Detalles del Proveedor</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        
-        <p><strong>Condiciones de Pago:</strong> <span id="modal-condiciones_pago"></span></p>
-        <p><strong>Método de Pago:</strong> <span id="modal-metodo_pago"></span></p>
-        <p><strong>Descripción:</strong> <span id="modal-descripcion"></span></p>
-        <p><strong>Historial de Pedidos:</strong> <span id="modal-historial_pedidos"></span></p>
-        <p><strong>Archivo:</strong><br><img id="modal-archivo" src="" width="150"></p>
-      </div>
+            <?php while ($proveedor = $resultados->fetch_assoc()): ?>
+
+                <tr>
+
+                    <td><?= $proveedor['id_proveedor']; ?></td>
+
+                    <td>
+                        <?= htmlspecialchars($proveedor['nombre_empresa']); ?>
+                    </td>
+
+                    <td>
+                        <?= htmlspecialchars($proveedor['telefono']); ?>
+                    </td>
+
+                    <td>
+                        <?= htmlspecialchars($proveedor['correo_electronico']); ?>
+                    </td>
+
+                    <td>
+
+                        <!-- VER -->
+                        <button
+                            class="btn btn-info btn-sm"
+                            data-bs-toggle="modal"
+                            data-bs-target="#proveedor<?= $proveedor['id_proveedor']; ?>">
+
+                            <i class="fas fa-eye"></i>
+                        </button>
+
+                        <!-- EDITAR -->
+                        <a href="edit.php?da=Suppliers-3&lla=<?= $proveedor['id_proveedor']; ?>"
+                           class="btn btn-primary btn-sm">
+
+                            <i class="fas fa-edit"></i>
+                        </a>
+
+                        <!-- ELIMINAR -->
+                        <button
+                            class="btn btn-danger btn-sm"
+                            onclick="borrarProveedor(
+                                <?= $proveedor['id_proveedor']; ?>,
+                                '<?= $proveedor['archivo']; ?>'
+                            )">
+
+                            <i class="fas fa-trash"></i>
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                <!-- MODAL -->
+                <div class="modal fade"
+                     id="proveedor<?= $proveedor['id_proveedor']; ?>"
+                     tabindex="-1">
+
+                    <div class="modal-dialog modal-lg">
+
+                        <div class="modal-content">
+
+                            <div class="modal-header bg-primary text-white">
+
+                                <h5 class="modal-title">
+                                    Proveedor #<?= $proveedor['id_proveedor']; ?>
+                                </h5>
+
+                                <button type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal">
+                                </button>
+
+                            </div>
+
+                            <div class="modal-body">
+
+                                <div class="row">
+
+                                    <div class="col-md-6 mb-3">
+                                        <strong>Producto:</strong><br>
+                                        <?= htmlspecialchars($proveedor['id_producto']); ?>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <strong>Empresa:</strong><br>
+                                        <?= htmlspecialchars($proveedor['nombre_empresa']); ?>
+                                    </div>
+
+                                    <div class="col-md-12 mb-3">
+                                        <strong>Dirección:</strong><br>
+                                        <?= htmlspecialchars($proveedor['direccion']); ?>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <strong>Teléfono:</strong><br>
+                                        <?= htmlspecialchars($proveedor['telefono']); ?>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <strong>Correo:</strong><br>
+                                        <?= htmlspecialchars($proveedor['correo_electronico']); ?>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <strong>Condiciones de Pago:</strong><br>
+                                        <?= htmlspecialchars($proveedor['condiciones_pago']); ?>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <strong>Método de Pago:</strong><br>
+                                        <?= htmlspecialchars($proveedor['metodo_pago']); ?>
+                                    </div>
+
+                                    <div class="col-md-12 mb-3">
+                                        <strong>Descripción:</strong><br>
+                                        <?= htmlspecialchars($proveedor['descripcion']); ?>
+                                    </div>
+
+                                    <div class="col-md-12 mb-3">
+                                        <strong>Historial de Pedidos:</strong><br>
+                                        <?= htmlspecialchars($proveedor['historial_pedidos']); ?>
+                                    </div>
+
+                                    <div class="col-md-12">
+
+                                        <strong>Archivo:</strong><br>
+
+                                        <?php if (!empty($proveedor['archivo'])): ?>
+
+                                            <img
+                                                src="../../public/files/uploads/proveedores/<?= htmlspecialchars($proveedor['archivo']); ?>"
+                                                class="img-fluid rounded border"
+                                                style="max-height:250px;">
+
+                                        <?php else: ?>
+
+                                            <span class="text-muted">
+                                                Sin archivo adjunto
+                                            </span>
+
+                                        <?php endif; ?>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            <?php endwhile; ?>
+
+            </tbody>
+
+        </table>
     </div>
-  </div>
+
 </div>
-
-<!-- Script para llenar el modal con los datos -->
-<script>
-  const detalleModal = document.getElementById('detalleModal');
-  detalleModal.addEventListener('show.bs.modal', function (event) {
-    const button = event.relatedTarget;
-  
-    document.getElementById('modal-condiciones_pago').textContent = button.getAttribute('data-condiciones_pago');
-    document.getElementById('modal-metodo_pago').textContent = button.getAttribute('data-metodo_pago');
-    document.getElementById('modal-descripcion').textContent = button.getAttribute('data-descripcion');
-    document.getElementById('modal-historial_pedidos').textContent = button.getAttribute('data-historial_pedidos');
-    document.getElementById('modal-archivo').src = '../../public/files/uploads/proveedores/' + button.getAttribute('data-archivo');
-  });
-</script>
-
-
-<script>
-function borrarProveedor(id, imagen) {
-  if (confirm('¿Está seguro de borrar el proveedor?')) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'delete.php', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onload = function () {
-      if (xhr.status === 200) {
-        alert('Proveedor eliminado correctamente.');
-        location.reload();
-      } else {
-        alert('Error al eliminar el proveedor.');
-      }
-    };
-    xhr.send('id_proveedor=' + id + '&imagen=' + imagen);
-  }
-}
-</script>

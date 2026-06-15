@@ -115,74 +115,227 @@ if (!$resultados) {
 </head>
 <body>
 
+<div class="table-responsive">
 
-<table class="table table-bordered table-hover">
-    <thead class="bg-primary text-white">
-             <tr>
-            <th scope="col">Id Producto</th>
-            <th scope="col">Nombre Producto</th>
-            <th scope="col">Cantidad Stock</th>
-            <th scope="col">Precio Unitario</th>
-            <th scope="col">Costo Unitario</th>
-            <th scope="col">Precio Compra</th>
-            <th scope="col">Precio Venta</th>
-            <th scope="col">Categoría Productos</th>
-            <th scope="col">Descripción</th>
-            <th scope="col">Código Barras</th>
-            <th scope="col">Ubicación</th>
-            <th scope="col">Estado</th>
-            <th scope="col">Id Proveedor</th>
-            <th scope="col">Id Producto</th>
-            <th scope="col">Fecha Adquisición</th>
-            <th scope="col">Fecha Vencimiento</th>
-            <th scope="col">Tipo Documento</th>
-            <th scope="col">Acciones</th>
-        </tr>
-                
-    </thead>
-    <tbody>
-    <?php while ($inventario = $resultados->fetch_assoc()): ?>
+    <table class="table table-hover table-bordered">
 
+        <thead class="table-primary">
+            <tr>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Stock</th>
+                <th>Precio Venta</th>
+                <th>Categoría</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
 
-        <tr>
-    <td><?php echo htmlspecialchars($inventario['codigo_inventario']); ?></td>
-        <td><?php echo htmlspecialchars($inventario['nombre_producto']); ?></td>
-        <td><?php echo htmlspecialchars($inventario['cantidad_stock']); ?></td>
-        <td>$ <?php echo number_format($inventario['precio_unitario'], 2, ',', '.'); ?></td>
-        <td>$ <?php echo number_format($inventario['costo_unitario'], 2, ',', '.'); ?></td>
-        <td>$ <?php echo number_format($inventario['precio_compra'], 2, ',', '.'); ?></td>
-        <td>$ <?php echo number_format($inventario['precio_venta'], 2, ',', '.'); ?></td>
-        <td><?php echo htmlspecialchars($inventario['categoria_productos']); ?></td>
-        <td><?php echo htmlspecialchars($inventario['descripcion']); ?></td>
-        <td><?php echo htmlspecialchars($inventario['codigo_barras']); ?></td>
-        <td><?php echo htmlspecialchars($inventario['ubicacion']); ?></td>
-        <td><?php echo htmlspecialchars($inventario['estado']); ?></td>
-        <td><?php echo htmlspecialchars($inventario['id_proveedor']); ?></td>
-        <td><?php echo htmlspecialchars($inventario['id_producto']); ?></td>
-        <td><?php echo htmlspecialchars($inventario['fecha_adquisicion']); ?></td>
-        <td><?php echo htmlspecialchars($inventario['fecha_vencimiento']); ?></td>
-        <td><img src="../../public/img/TipoDocumento/<?php echo $inventario['tipo_documento']; ?>" width="100" alt=""></td>
-    
-        
-        <td>
-                            <a href="edit.php?da=3&lla=<?php echo $inventario['codigo_inventario']; ?>" class="btn btn-custom-green btn-editar">
-                                <i class="fas fa-edit icon"></i> Editar
-                            </a>
+        <tbody>
 
-                            <a href="#" class="btn btn-danger btn-borrar" onclick="borrarInventario(<?php echo $inventario['codigo_inventario']; ?>)">
-                                <i class="fas fa-trash-alt"></i> Borrar
-                            </a>
-                            </td>
-                    </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
-    </div>
+        <?php while ($inventario = $resultados->fetch_assoc()): ?>
+
+            <tr>
+
+                <td><?= htmlspecialchars($inventario['codigo_inventario']) ?></td>
+
+                <td><?= htmlspecialchars($inventario['nombre_producto']) ?></td>
+
+                <td><?= htmlspecialchars($inventario['cantidad_stock']) ?></td>
+
+                <td>
+                    $<?= number_format($inventario['precio_venta'], 2, ',', '.') ?>
+                </td>
+
+                <td><?= htmlspecialchars($inventario['categoria_productos']) ?></td>
+
+                <td>
+
+                    <?php
+                    $estado = strtolower($inventario['estado']);
+
+                    if ($estado == 'activo') {
+                        echo '<span class="badge bg-success">Activo</span>';
+                    } elseif ($estado == 'agotado') {
+                        echo '<span class="badge bg-danger">Agotado</span>';
+                    } else {
+                        echo '<span class="badge bg-warning text-dark">'
+                            . htmlspecialchars($inventario['estado']) .
+                            '</span>';
+                    }
+                    ?>
+
+                </td>
+
+                <td>
+
+                    <!-- Ver -->
+                    <button
+                        class="btn btn-info btn-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#inventario<?= $inventario['codigo_inventario'] ?>">
+
+                        <i class="fas fa-eye"></i>
+                    </button>
+
+                    <!-- Editar -->
+                    <a href="edit.php?da=3&lla=<?= $inventario['codigo_inventario'] ?>"
+                       class="btn btn-primary btn-sm">
+
+                        <i class="fas fa-edit"></i>
+                    </a>
+
+                    <!-- Eliminar -->
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="borrarInventario(<?= $inventario['codigo_inventario'] ?>)">
+
+                        <i class="fas fa-trash"></i>
+                    </button>
+
+                </td>
+
+            </tr>
+
+            <!-- Modal -->
+            <div class="modal fade"
+                 id="inventario<?= $inventario['codigo_inventario'] ?>"
+                 tabindex="-1"
+                 aria-hidden="true">
+
+                <div class="modal-dialog modal-lg">
+
+                    <div class="modal-content">
+
+                        <div class="modal-header bg-primary text-white">
+
+                            <h5 class="modal-title">
+                                Inventario #<?= htmlspecialchars($inventario['codigo_inventario']) ?>
+                            </h5>
+
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                            </button>
+
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Producto:</strong><br>
+                                    <?= htmlspecialchars($inventario['nombre_producto']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Categoría:</strong><br>
+                                    <?= htmlspecialchars($inventario['categoria_productos']) ?>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <strong>Stock:</strong><br>
+                                    <?= htmlspecialchars($inventario['cantidad_stock']) ?>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <strong>Precio Unitario:</strong><br>
+                                    $<?= number_format($inventario['precio_unitario'], 2, ',', '.') ?>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <strong>Costo Unitario:</strong><br>
+                                    $<?= number_format($inventario['costo_unitario'], 2, ',', '.') ?>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <strong>Precio Compra:</strong><br>
+                                    $<?= number_format($inventario['precio_compra'], 2, ',', '.') ?>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <strong>Precio Venta:</strong><br>
+                                    $<?= number_format($inventario['precio_venta'], 2, ',', '.') ?>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <strong>Estado:</strong><br>
+                                    <?= htmlspecialchars($inventario['estado']) ?>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <strong>Descripción:</strong><br>
+                                    <?= htmlspecialchars($inventario['descripcion']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Código de Barras:</strong><br>
+                                    <?= htmlspecialchars($inventario['codigo_barras']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Ubicación:</strong><br>
+                                    <?= htmlspecialchars($inventario['ubicacion']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Proveedor:</strong><br>
+                                    <?= htmlspecialchars($inventario['id_proveedor']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>ID Producto:</strong><br>
+                                    <?= htmlspecialchars($inventario['id_producto']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Fecha Adquisición:</strong><br>
+                                    <?= htmlspecialchars($inventario['fecha_adquisicion']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Fecha Vencimiento:</strong><br>
+                                    <?= htmlspecialchars($inventario['fecha_vencimiento']) ?>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <strong>Documento:</strong><br>
+
+                                    <?php if (!empty($inventario['tipo_documento'])): ?>
+                                        <img
+                                            src="../../public/img/TipoDocumento/<?= htmlspecialchars($inventario['tipo_documento']) ?>"
+                                            class="img-fluid border rounded"
+                                            style="max-height:250px;">
+                                    <?php else: ?>
+                                        <span class="text-muted">
+                                            Sin documento
+                                        </span>
+                                    <?php endif; ?>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        <?php endwhile; ?>
+
+        </tbody>
+
+    </table>
+
 </div>
 
 
-
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
  <!-- Paginación -->
  <nav>
         <ul class="pagination">

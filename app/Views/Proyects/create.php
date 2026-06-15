@@ -112,48 +112,185 @@ if (!$resultados) {
     </form>
 
     
-    
-    <table class="table table-bordered table-hover">
-    <thead class="bg-primary text-white">
-                <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Nombre proyecto</th>
-                <th scope="col">Descripcion</th>
-                <th scope="col">Fecha inicio</th>
-                <th scope="col">Fecha fin</th>
-                <th scope="col">Estado</th>
-                <th scope="col">Usuario</th>
-                <th scope="col">Imagen</th>
-                <th scope="col">Acciones</th>
+    <div class="table-responsive">
+
+    <table class="table table-hover table-bordered">
+
+        <thead class="table-primary">
+            <tr>
+                <th>ID</th>
+                <th>Proyecto</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+                <th>Estado</th>
+                <th>Acciones</th>
             </tr>
         </thead>
+
         <tbody>
-            <?php while ($proyecto = $resultados->fetch_assoc()): ?>
-        
+
+        <?php while ($proyecto = $resultados->fetch_assoc()): ?>
+
             <tr>
-                <td><?php echo htmlspecialchars($proyecto['id_proyecto']); ?></td>
-                <td><?php echo htmlspecialchars($proyecto['nombre_proyecto']); ?></td>
-                <td><?php echo htmlspecialchars($proyecto['descripcion']); ?></td>
-                <td><?php echo htmlspecialchars($proyecto['fecha_inicio']); ?></td>
-                <td><?php echo htmlspecialchars($proyecto['fecha_fin']); ?></td>
-                <td><?php echo htmlspecialchars($proyecto['estado']); ?></td>
-                <td><?php echo htmlspecialchars($proyecto['id_usuario']); ?></td>
-                <td><img src="../../public/img/proyecto/<?php echo htmlspecialchars($proyecto['imagen_proyecto']); ?>" width="100" alt=""></td>
+
+                <td><?= htmlspecialchars($proyecto['id_proyecto']) ?></td>
+
+                <td><?= htmlspecialchars($proyecto['nombre_proyecto']) ?></td>
+
+                <td><?= htmlspecialchars($proyecto['fecha_inicio']) ?></td>
+
+                <td><?= htmlspecialchars($proyecto['fecha_fin']) ?></td>
+
                 <td>
-                    <a href="edit.php?da=3&lla=<?php echo $proyecto['id_proyecto']; ?>" class="btn btn-custom-green btn-editar">
-                        <i class="fas fa-edit icon"></i> Editar
+
+                    <?php
+                    $estado = strtolower($proyecto['estado']);
+
+                    if ($estado == 'activo') {
+                        echo '<span class="badge bg-success">Activo</span>';
+                    } elseif ($estado == 'finalizado') {
+                        echo '<span class="badge bg-primary">Finalizado</span>';
+                    } else {
+                        echo '<span class="badge bg-warning text-dark">'
+                            . htmlspecialchars($proyecto['estado']) .
+                            '</span>';
+                    }
+                    ?>
+
+                </td>
+
+                <td>
+
+                    <!-- Ver -->
+                    <button
+                        class="btn btn-info btn-sm"
+                        data-bs-toggle="modal"
+                        data-bs-target="#proyecto<?= $proyecto['id_proyecto'] ?>">
+
+                        <i class="fas fa-eye"></i>
+                    </button>
+
+                    <!-- Editar -->
+                    <a href="edit.php?da=3&lla=<?= $proyecto['id_proyecto'] ?>"
+                       class="btn btn-primary btn-sm">
+
+                        <i class="fas fa-edit"></i>
                     </a>
-                    <a href="#" class="btn btn-danger btn-borrar" onclick="borrarProyecto(<?php echo $proyecto['id_proyecto']; ?>, '<?php echo $proyecto['imagen_proyecto']; ?>')">
-                        <i class="fas fa-trash-alt"></i> Borrar
-                    </a>
-                    </td>
-                    </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
-    </div>
+
+                    <!-- Eliminar -->
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="borrarProyecto(
+                            <?= $proyecto['id_proyecto'] ?>,
+                            '<?= htmlspecialchars($proyecto['imagen_proyecto']) ?>'
+                        )">
+
+                        <i class="fas fa-trash"></i>
+                    </button>
+
+                </td>
+
+            </tr>
+
+            <!-- Modal -->
+            <div class="modal fade"
+                 id="proyecto<?= $proyecto['id_proyecto'] ?>"
+                 tabindex="-1"
+                 aria-hidden="true">
+
+                <div class="modal-dialog modal-lg">
+
+                    <div class="modal-content">
+
+                        <div class="modal-header bg-primary text-white">
+
+                            <h5 class="modal-title">
+                                Proyecto #<?= htmlspecialchars($proyecto['id_proyecto']) ?>
+                            </h5>
+
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                            </button>
+
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Nombre:</strong><br>
+                                    <?= htmlspecialchars($proyecto['nombre_proyecto']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Usuario:</strong><br>
+                                    <?= htmlspecialchars($proyecto['id_usuario']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Fecha Inicio:</strong><br>
+                                    <?= htmlspecialchars($proyecto['fecha_inicio']) ?>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <strong>Fecha Fin:</strong><br>
+                                    <?= htmlspecialchars($proyecto['fecha_fin']) ?>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <strong>Estado:</strong><br>
+                                    <?= htmlspecialchars($proyecto['estado']) ?>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <strong>Descripción:</strong><br>
+                                    <?= htmlspecialchars($proyecto['descripcion']) ?>
+                                </div>
+
+                                <div class="col-md-12">
+
+                                    <strong>Imagen:</strong><br>
+
+                                    <?php if (!empty($proyecto['imagen_proyecto'])): ?>
+
+                                        <img
+                                            src="../../public/img/proyecto/<?= htmlspecialchars($proyecto['imagen_proyecto']) ?>"
+                                            class="img-fluid border rounded"
+                                            style="max-height:300px;">
+
+                                    <?php else: ?>
+
+                                        <span class="text-muted">
+                                            Sin imagen disponible
+                                        </span>
+
+                                    <?php endif; ?>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        <?php endwhile; ?>
+
+        </tbody>
+
+    </table>
+
 </div>
 
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
  <!-- Paginación....... -->
  <nav>
@@ -193,7 +330,6 @@ if (!$resultados) {
     </nav>
 
 </div>
-
     <script>
         function borrarProyecto(id, imagen) {
             if (confirm('¿Está seguro de borrar  ?')) {
